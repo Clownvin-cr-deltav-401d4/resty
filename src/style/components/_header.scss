@@ -1,0 +1,11 @@
+@import '../vars';
+
+#root > header {
+  background-color: $accent;
+  padding: 7px;
+  padding-left: 14px;
+
+  h1 {
+    font-size: 250%;
+  }
+}
