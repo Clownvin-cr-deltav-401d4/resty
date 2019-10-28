@@ -1,0 +1,31 @@
+@import '../vars';
+
+#request-form {
+  display: flex;
+  flex-direction: column;
+
+  #methods {
+    display: flex;
+    justify-content: space-evenly;
+
+    input {
+      display: none;
+    }
+    input+span {
+      outline: 1px solid $border;
+      display: inline-block;
+      padding: 5px;
+    }
+
+    input:checked+span {
+      background: $accent;
+    }
+  }
+
+  input[type="submit"] {
+    outline: 1px solid $border;
+    background: none;
+    display: inline-block;
+    padding: 5px;
+  }
+}

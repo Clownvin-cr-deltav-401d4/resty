@@ -1,0 +1,43 @@
+@import '../vars';
+
+main > aside > h2 {
+  font-size: 125%;
+  text-align: center;
+  padding: 5px;
+  background-color: #222;
+  color: $accent;
+}
+#history {
+  background-color: #666;
+  padding: 5px;
+  height: 100%;
+  overflow: auto;
+
+  span {
+    display: inline-block;
+    border-radius: 5px;
+    background-color: #FFF;
+    margin: 2px;
+    padding: 3px;
+  }
+
+  span.method {
+    text-transform: uppercase;
+  }
+
+  span.category-2 {
+    background-color: rgb(70, 238, 107);
+  }
+
+  span.category-3 {
+    background-color: rgb(206, 206, 206);
+  }
+
+  span.category-4 {
+    background-color: rgb(255, 183, 75);
+  }
+
+  span.category-5 {
+    background-color: rgb(255, 75, 75);
+  }
+}

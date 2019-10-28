@@ -1,0 +1,11 @@
+@import './reset';
+@import './components/header';
+@import './components/footer';
+@import './components/form';
+@import './components/history';
+
+main {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  overflow: hidden;
+}

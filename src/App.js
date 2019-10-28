@@ -1,26 +1,74 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import './style/app.scss';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import Header from './components/header';
+import Footer from './components/footer';
+import History from './components/history';
+import Form from './components/form';
+import Response from './components/response';
+import superagent from 'superagent';
+
+class App extends React.Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      response: '',
+      history: [],
+    }
+  }
+
+  addHistory(request, status) {
+    this.setState(state => {
+      state.history.unshift({request, status});
+      return state;
+    })
+  }
+
+  setResponse = (status, response) => {
+    this.setState(state => {
+      state.response = response;
+      return state;
+    });
+  }
+
+  onRequestSubmit = request => {
+    superagent[request.method](request.url).end((err, res) => {
+      if (err) {
+        this.addHistory(request, err.status || 400);
+        this.setResponse(err.status || 400, err.message);
+      } else {
+        this.addHistory(request, res.status);
+        this.setResponse(res.status, res.text);
+      };
+    });
+    console.log(request);
+  };
+
+  showResponse = text => {
+    this.setState(state => {
+      state.response = text;
+      return state;
+    })
+  }
+
+  render() {
+    return (
+      <>
+        <Header />
+        <main>
+          <aside>
+            <History history={this.state.history} />
+          </aside>
+          <section className="deck">
+            <Form onSubmit={this.onRequestSubmit}/>
+            <Response text={this.state.response} />
+          </section>
+        </main>
+        <Footer />
+      </>
+    );
+  }
 }
 
 export default App;
