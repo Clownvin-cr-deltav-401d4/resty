@@ -33,7 +33,7 @@ class App extends React.Component {
   }
 
   onRequestSubmit = request => {
-    superagent[request.method](request.url).end((err, res) => {
+    superagent[request.method](request.url).withCredentials().end((err, res) => {
       if (err) {
         this.addHistory(request, err.status || 400);
         this.setResponse(err.status || 400, err.message);
