@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 
 function Method(props) {
   return (
@@ -13,67 +13,63 @@ function Method(props) {
 
 const METHODS = ['get', 'post', 'put', 'patch', 'delete'];
 
-class Form extends React.Component {
+function Form(props) {
+  const [state, setState] = useState({
+    method: 'get',
+    url: '',
+    headers: {},
+    body: '',
+  });
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      method: 'get',
-      url: '',
-      headers: {},
-    }
-  }
-
-  onSubmit = event => {
+  const onSubmit = event => {
     event.preventDefault()
-    this.props.onSubmit({...this.state});
+    props.onSubmit(state);
   }
 
-  getMethodOnClick = method => {
-    const thiss = this;
+  const getMethodOnClick = method => {
     return event => {
       event.preventDefault()
-      thiss.setState(state => {
-        state.method = method;
-        return state;
-      });
+      setState({...state, method});
     }
   }
 
-  urlOnChange = event => {
+  const urlOnChange = event => {
     event.preventDefault();
-    this.setState(state => {
-      state.url = this.refs.url.value;
-      return state;
-    })
+    setState({...state, url: event.target.value});
+  }
+  
+  const onBodyChange = event => {
+    event.preventDefault();
+    setState({...state, body: event.target.value});
   }
 
-  render() {
-    return (
-      <form id="request-form" onSubmit={this.onSubmit}>
-        <input
-          type="url"  
-          onChange={this.urlOnChange}
-          id="url" ref="url" name="url"
-          placeholder="https://www.google.com" 
-          required 
-        />
-        <ul id="methods">
-          {METHODS.map(method => {
-            return (
-              <Method
-                key={method}
-                type={method}
-                onClick={this.getMethodOnClick(method)}
-                checked={this.state.method === method}
-              />
-            )
-          })}
-        </ul>
-        <input type="submit" value="Go!"/>
-      </form>
-    )
-  }
+  return (
+    <form id="request-form" onSubmit={onSubmit}>
+      <input
+        type="url"  
+        onChange={urlOnChange}
+        id="url" name="url"
+        placeholder="https://www.google.com" 
+        required 
+      />
+      <ul id="methods">
+        {METHODS.map(method => {
+          return (
+            <Method
+              key={method}
+              type={method}
+              onClick={getMethodOnClick(method)}
+              checked={state.method === method}
+            />
+          )
+        })}
+      </ul>
+      <section>
+        <textarea disabled={state.method !== 'post' && state.method !== 'put'} onChange={onBodyChange} />
+      </section>
+      <input type="submit" value="Go!"/>
+    </form>
+  );
 }
 
 export default Form;

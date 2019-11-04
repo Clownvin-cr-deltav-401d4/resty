@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import './style/app.scss';
 
 import Header from './components/header';
@@ -8,67 +8,57 @@ import Form from './components/form';
 import Response from './components/response';
 import superagent from 'superagent';
 
-class App extends React.Component {
+function App(props) {
+  const [state, setState] = useState({
+    response: '',
+    history: [],
+  })
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      response: '',
-      history: [],
-    }
-  }
-
-  addHistory(request, status) {
-    this.setState(state => {
-      state.history.unshift({request, status});
-      return state;
-    })
-  }
-
-  setResponse = (status, response) => {
-    this.setState(state => {
-      state.response = response;
-      return state;
+  const addHistory = (request, status) => {
+    state.history.unshift({request, status});
+    setState({
+      ...state,
     });
   }
 
-  onRequestSubmit = request => {
-    superagent[request.method](request.url).withCredentials().end((err, res) => {
+  const setResponse = (status, response) => {
+    setState({...state, response});
+  }
+
+  const onRequestSubmit = request => {
+    const pending = superagent[request.method](request.url);
+    if (request.method === 'post' || request.method === 'patch') {
+      console.log("Sending", request.body);
+      pending.set('Content-Type', "application/json");
+      pending.send(request.body);
+    }
+    pending.end((err, res) => {
       if (err) {
-        this.addHistory(request, err.status || 400);
-        this.setResponse(err.status || 400, err.message);
+        addHistory(request, err.status || 400);
+        setResponse(err.status || 400, err.message);
       } else {
-        this.addHistory(request, res.status);
-        this.setResponse(res.status, res.text);
+        addHistory(request, res.status);
+        setResponse(res.status, res.text);
       };
     });
     console.log(request);
   };
 
-  showResponse = text => {
-    this.setState(state => {
-      state.response = text;
-      return state;
-    })
-  }
-
-  render() {
-    return (
-      <>
-        <Header />
-        <main>
-          <aside>
-            <History history={this.state.history} />
-          </aside>
-          <section className="deck">
-            <Form onSubmit={this.onRequestSubmit}/>
-            <Response text={this.state.response} />
-          </section>
-        </main>
-        <Footer />
-      </>
-    );
-  }
+  return (
+    <>
+      <Header />
+      <main>
+        <aside>
+          <History history={state.history} />
+        </aside>
+        <section className="deck">
+          <Form onSubmit={onRequestSubmit}/>
+          <Response text={state.response} />
+        </section>
+      </main>
+      <Footer />
+    </>
+  );
 }
 
 export default App;
