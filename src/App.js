@@ -26,7 +26,13 @@ function App(props) {
   }
 
   const onRequestSubmit = request => {
-    superagent[request.method](request.url).end((err, res) => {
+    const pending = superagent[request.method](request.url);
+    if (request.method === 'post' || request.method === 'patch') {
+      console.log("Sending", request.body);
+      pending.set('Content-Type', "application/json");
+      pending.send(request.body);
+    }
+    pending.end((err, res) => {
       if (err) {
         addHistory(request, err.status || 400);
         setResponse(err.status || 400, err.message);

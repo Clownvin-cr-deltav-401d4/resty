@@ -37,6 +37,11 @@ function Form(props) {
     event.preventDefault();
     setState({...state, url: event.target.value});
   }
+  
+  const onBodyChange = event => {
+    event.preventDefault();
+    setState({...state, body: event.target.value});
+  }
 
   return (
     <form id="request-form" onSubmit={onSubmit}>
@@ -59,6 +64,9 @@ function Form(props) {
           )
         })}
       </ul>
+      <section>
+        <textarea disabled={state.method !== 'post' && state.method !== 'put'} onChange={onBodyChange} />
+      </section>
       <input type="submit" value="Go!"/>
     </form>
   );

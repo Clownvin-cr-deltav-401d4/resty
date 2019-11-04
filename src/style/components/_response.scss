@@ -1,0 +1,9 @@
+#response {
+  max-width: calc(.6666 * 100vw);
+  flex-grow: 1;
+  textarea {
+    min-width: 100%;
+    min-height: 100%;
+    box-sizing: border-box;
+  }
+}
